@@ -13,64 +13,73 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.felipe.baozistore.model.Cliente;
-import com.felipe.baozistore.service.ClienteService;
+import com.felipe.baozistore.model.Produto;
+import com.felipe.baozistore.service.ProdutoService;
 
 @RestController
-@RequestMapping("/clientes")
-public class ClienteController {
-	private final ClienteService service;
+@RequestMapping("/produtos")
+public class ProdutoController {
+	private final ProdutoService service;
 	
-	ClienteController(ClienteService clienteServ){
-		this.service = clienteServ;
-	}
-	
-	@PostMapping
-	public ResponseEntity<?> criar(@RequestBody Cliente clienteRequest){
-		try {
-			Cliente cliente = service.criar(clienteRequest);
-			return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
-			
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	ProdutoController(ProdutoService serviceProduto){
+		this.service = serviceProduto;
 	}
 	
 	@GetMapping
-	public List<Cliente> listarTodos(){
+	public List<Produto> listarTodos(){
 		return service.listarTodos();
 	}
 	
 	@GetMapping(path = { "/{id}" })
-	public ResponseEntity<?> listarPorId(@PathVariable("id") Long id) {
+	public ResponseEntity<?> listarPorId(@PathVariable("id") Long id){
 		try {
-			Cliente cliente = service.listarPorId(id);
-			return ResponseEntity.ok().body(cliente);
+			Produto produto = service.listarPorId(id);
+			return ResponseEntity.ok().body(produto);
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+		
+	}
+	
+	@PostMapping
+	public ResponseEntity<?> criar(@RequestBody Produto produto){
+		try {
+			Produto produtoNovo = service.criar(produto);
+			return ResponseEntity.status(HttpStatus.CREATED).body(produtoNovo);
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<?> editar(@PathVariable("id") Long id, @RequestBody Cliente cliente){
+	public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
 		try {
-			Cliente clienteAtualizado = service.editar(id, cliente);
-			return ResponseEntity.ok(clienteAtualizado);
+			Produto produto = service.editar(id, produtoAtualizado);
+			return ResponseEntity.ok(produto);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-			
 	}
 	
 	@DeleteMapping(path = { "/{id}" })
-	public ResponseEntity<?> deletarPorId(@PathVariable("id") Long id){
+	public ResponseEntity<?> deletar(@PathVariable("id") Long id){
 		Boolean result = service.deletarPorId(id);
 		if(result) {
 			return ResponseEntity.ok().build();
 		}
 		
-		return ResponseEntity.badRequest().body("Cliente não encontrado");
-	}	
+		return ResponseEntity.badRequest().body("Produto não encontrado");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
